@@ -1,0 +1,10 @@
+CREATE TABLE company_banner (
+    banner_id INT AUTO_INCREMENT PRIMARY KEY,
+    banner1 TEXT,
+    banner2 TEXT,
+    banner3 TEXT,
+    banner4 TEXT,
+    user_id VARCHAR(255),
+    email VARCHAR(255),
+    company VARCHAR(255)
+);
