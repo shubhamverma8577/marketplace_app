@@ -1,3 +1,4 @@
+ desc user_login;
 +--------------------+--------------+------+-----+---------+-------+
 | Field              | Type         | Null | Key | Default | Extra |
 +--------------------+--------------+------+-----+---------+-------+
@@ -11,4 +12,7 @@
 | banner             | longtext     | YES  |     | NULL    |       |
 | company_name       | varchar(255) | YES  |     | NULL    |       |
 | user_type          | varchar(255) | YES  |     | NULL    |       |
+| banner2            | longtext     | YES  |     | NULL    |       |
+| banner3            | longtext     | YES  |     | NULL    |       |
+| banner4            | longtext     | YES  |     | NULL    |       |
 +--------------------+--------------+------+-----+---------+-------+
