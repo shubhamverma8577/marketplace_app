@@ -4,11 +4,13 @@
  */
 package com.media.testing_proj.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.media.testing_proj.Bean.SupportBean;
+import com.media.testing_proj.Bean.ImageUploadRequest;
 import com.media.testing_proj.Bean.User;
 import com.media.testing_proj.services.CustomerManagement;
 import com.media.testing_proj.services.UserService;
-import static com.media.testing_proj.services.UserService.getMD5;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
@@ -25,13 +27,13 @@ import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -40,7 +42,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Controller
-@CrossOrigin(origins = "http://localhost:3000")
 
 public class Modelcontroller {
         @Autowired
@@ -49,7 +50,7 @@ public class Modelcontroller {
 
     @GetMapping("/login")
     public ModelAndView login() {
-        ModelAndView mav = new ModelAndView("User-Login");
+        ModelAndView mav = new ModelAndView("index");
         mav.addObject("username", new User());
         return mav;
     }
@@ -221,6 +222,91 @@ public void getChangePassword(String confirmpassword, String code, HttpServletRe
     }
 }
 
+ @PostMapping(value = {"/uploadlogo"})
+ public void getLogo(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            PrintWriter out = response.getWriter();
+            BufferedReader reader = request.getReader();
+            StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            ImageUploadRequest imageUploadRequest = objectMapper.readValue(jsonBuilder.toString(), ImageUploadRequest.class);
+
+            System.out.println("imageFile-->" + imageUploadRequest.getImageFile());
+            System.out.println("userloginid-->" + imageUploadRequest.getUserloginid());
+
+            CustomerManagement cm = new CustomerManagement();
+            int storelogo = cm.uploadCompnyLogo(imageUploadRequest.getImageFile(), imageUploadRequest.getUserloginid());
+            System.out.println("hello1 - " + new Date());
+            out.print(storelogo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+ 
+   @RequestMapping(value = {"/getuploadlogo"}, method = RequestMethod.POST)
+public void getuploadlogo(@RequestParam("userloginid") String userloginid, HttpServletRequest request, HttpServletResponse response) {
+    try {
+        PrintWriter out = response.getWriter();
+        CustomerManagement cm = new CustomerManagement();
+        System.out.println("userloginid - " + userloginid);
+        JSONArray enrollList = cm.getuploadCompnyLogo(userloginid,request);
+        System.out.println("userloginid getuploadlogo - " + new Date());
+
+        out.print(enrollList);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+@RequestMapping(value = "/userdeletelogo", method = RequestMethod.POST)
+public void getdeleteUserLogo(@RequestParam("userloginid") String userloginid, HttpServletRequest request, HttpServletResponse response) {
+    try {
+        PrintWriter out = response.getWriter();
+        CustomerManagement cm = new CustomerManagement();
+        System.out.println("userloginid - " + userloginid);
+        JSONArray enrollList = cm.deleteCompnyLogo(userloginid);
+        System.out.println("userloginid userdeletelogo - " + new Date());
+
+        out.print(enrollList);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+@RequestMapping(value = "/uploadBanners", method = RequestMethod.POST)
+public void getaddBanners(@RequestBody Map<String, String> requestParams, HttpServletRequest request, HttpServletResponse response) {
+    try {
+        PrintWriter out = response.getWriter();
+        CustomerManagement cm = new CustomerManagement();
+
+        String userloginid = requestParams.get("userloginid");
+        String base64Image = requestParams.get("base64Image");
+        String email = requestParams.get("email");
+        String company_name = requestParams.get("company_name");
+        String bannerId = requestParams.get("bannerId");
+        String bannerVarify = requestParams.get("bannerVarify");
+
+        System.out.println("userloginid - " + userloginid);
+        System.out.println("email - " + email);
+        System.out.println("company_name - " + company_name);
+        System.out.println("bannerId - " + bannerId);
+        System.out.println("bannerVarify - " + bannerVarify);
+        
+        JSONArray enrollList = cm.addBanners(base64Image, userloginid, email, company_name,bannerId,bannerVarify,request);
+        System.out.println("base64Image,userloginid,email,company_name - " + new Date());
+
+        out.print(enrollList);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
        @RequestMapping(value = {"/", "/index"})
     public ModelAndView homeView() {
         ModelAndView view = new ModelAndView("index");
@@ -256,13 +342,9 @@ public void getChangePassword(String confirmpassword, String code, HttpServletRe
         ModelAndView view = new ModelAndView("Account_Info");
         return view;
     }
-     @RequestMapping(value = {"/User-Login", "/User-Login"})
-    public ModelAndView LoginView() {
-        ModelAndView view = new ModelAndView("User-Login");
-        return view;
-    }
+    
     @RequestMapping(value = {"/Ui-Settings", "/Ui-Settings"})
-    public ModelAndView SettingsView() {
+    public ModelAndView SettingView() {
         ModelAndView view = new ModelAndView("Ui-Settings");
         return view;
     }
