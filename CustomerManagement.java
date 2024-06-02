@@ -412,11 +412,9 @@ public class CustomerManagement {
         return enrollList;
     }
 
-    public JSONArray addBanners(String base64Image, String userloginid, String email, String company_name, String bannerId,String bannerVarify, HttpServletRequest request) {
+public JSONArray addBanners(String base64Image, String userloginid, String email, String company_name, String bannerId, String bannerVarify, HttpServletRequest request) {
     JSONArray enrollList = new JSONArray();
     ConnectionManager mycon = new ConnectionManager();
-
-    
 
     String updateCompanyBannerSQL = "";
     String updateUserLoginSQL = "";
@@ -424,19 +422,19 @@ public class CustomerManagement {
     switch (bannerVarify) {
         case "0":
             updateCompanyBannerSQL = "UPDATE company_banner SET banner1 = ?, user_id = ?, email = ?, company = ? WHERE banner_id = ?";
-            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '1' WHERE bannerId = ?";
+            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '1' WHERE banner_id = ?";
             break;
         case "1":
             updateCompanyBannerSQL = "UPDATE company_banner SET banner2 = ?, user_id = ?, email = ?, company = ? WHERE banner_id = ?";
-            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '2' WHERE bannerId = ?";
+            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '2' WHERE banner_id = ?";
             break;
         case "2":
             updateCompanyBannerSQL = "UPDATE company_banner SET banner3 = ?, user_id = ?, email = ?, company = ? WHERE banner_id = ?";
-            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '3' WHERE bannerId = ?";
+            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '3' WHERE banner_id = ?";
             break;
         case "3":
             updateCompanyBannerSQL = "UPDATE company_banner SET banner4 = ?, user_id = ?, email = ?, company = ? WHERE banner_id = ?";
-            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '4' WHERE bannerId = ?";
+            updateUserLoginSQL = "UPDATE company_banner SET banner_varify = '4' WHERE banner_id = ?";
             break;
         default:
             throw new IllegalArgumentException("Invalid banner case: " + bannerVarify);
@@ -458,7 +456,7 @@ public class CustomerManagement {
 
                 int rowsAffectedCompanyBanner = psCompanyBanner.executeUpdate();
 
-                // Update user_login table
+                // Update company_banner table's banner_varify field
                 psUserLogin.setString(1, bannerId);
 
                 int rowsAffectedUserLogin = psUserLogin.executeUpdate();
@@ -492,6 +490,7 @@ public class CustomerManagement {
 
     return enrollList;
 }
+
 
     private String generateRandomCode() {
         SecureRandom random = new SecureRandom();
